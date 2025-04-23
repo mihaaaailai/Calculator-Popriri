@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator Popriri Salariu & Fracții</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0056b3;
+      --secondary-color: #6c757d;
+      --background-light: #f8f9fa;
+      --background-white: #ffffff;
+      --text-color: #333;
+      --border-color: #ced4da;
+      --success-bg: #e9f5e9;
+      --error-bg: #f8d7da;
+      --error-text: #721c24;
+      --gradient-text: linear-gradient(90deg, #00C7C7 0%, #7BFD80 97.37%);
+      --gradient-green: #7BFD80;
+      --border-radius: 8px;
+      --input-padding: 0.75rem;
+      --element-spacing: 1rem;
+      --button-sm-padding: 0.5rem 1rem; /* Pastram padding mai mic */
+    }
+
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: var(--background-light);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      background: var(--background-white);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2em;
+        font-weight: 700;
+        background: var(--gradient-text);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    fieldset {
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem 1.5rem;
+        margin-bottom: var(--element-spacing);
+        margin-top: var(--element-spacing);
+    }
+
+    legend {
+        font-weight: 600;
+        padding: 0 0.5rem;
+        font-size: 1.2em;
+        background: var(--gradient-text);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      margin-bottom: var(--element-spacing);
+      padding: var(--input-padding);
+      width: 100%;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.2);
+    }
+
+    .simple-calc-section {
+        margin-top: calc(-1 * var(--element-spacing) + 5px);
+        margin-bottom: var(--element-spacing);
+        padding: 0.75rem;
+        background-color: #fdfdff;
+        border: 1px dashed var(--border-color);
+        border-radius: var(--border-radius);
+        text-align: center;
+    }
+
+    .simple-calc-section p {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        font-size: 0.9em;
+        color: var(--secondary-color);
+    }
+
+    .simple-calc-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    /* === MODIFICARE BUTOANE CALCUL SIMPLU === */
+    button.simple-calc-button {
+      /* background-color: var(--primary-color); <- Inlocuit */
+      /* color: var(--background-white); <- Inlocuit */
+      background-image: var(--gradient-text); /* Aplicam gradientul */
+      color: #000; /* Text negru pentru contrast */
+      border: none;
+      padding: var(--button-sm-padding);
+      font-weight: 600; /* Ajustat font-weight (poate fi 700 daca vrei exact ca cel principal) */
+      font-size: 0.9em;
+      flex-grow: 0;
+      /* opacity: 0.9; <- Optional: scos opacitatea default */
+    }
+    button.simple-calc-button:hover {
+        /* opacity: 1; <- Scoatem regula specifica de hover */
+        /* background-color: #004080; <- Scoatem regula specifica de hover */
+        opacity: 0.9; /* Aplicam acelasi hover ca la butonul principal */
+    }
+     /* ======================================= */
+
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      margin-right: 0.75rem;
+      width: auto;
+      height: 1.2em;
+      width: 1.2em;
+      cursor: pointer;
+      accent-color: var(--gradient-green);
+    }
+
+    .checkbox-container label {
+        margin-bottom: 0;
+        font-weight: 400;
+        cursor: pointer;
+        flex-grow: 1;
+    }
+
+    .hidden {
+        display: none;
+    }
+    input:disabled, label.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    label.disabled {
+        display: inline-block;
+    }
+
+    .button-group {
+        display: flex;
+        gap: var(--element-spacing);
+        margin-top: 1.5rem;
+    }
+
+    /* Regula generala pentru butoane */
+    button {
+      padding: var(--input-padding) 1.5rem; /* Padding default, suprascris pt .simple-calc-button */
+      border-radius: var(--border-radius);
+      font-size: 1rem; /* Font size default, suprascris pt .simple-calc-button */
+      font-weight: 700; /* Font weight default, suprascris pt .simple-calc-button */
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-grow: 1; /* Default, suprascris pt .simple-calc-button */
+      border: 2px solid transparent;
+      box-sizing: border-box;
+    }
+
+    /* Hover general pentru butoane (daca nu e suprascris) */
+    button:hover {
+        opacity: 0.9;
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    /* Buton primar specific */
+    button.primary {
+      background-image: var(--gradient-text);
+      color: #000;
+      border: none;
+      /* Mosteneste font-weight: 700 de la regula generala 'button' */
+      /* Mosteneste padding, font-size, flex-grow de la regula generala 'button' */
+    }
+     /* Hover-ul este deja definit in regula generala button:hover */
+
+
+    /* Buton secundar specific */
+    button.secondary {
+      background-color: transparent;
+      color: var(--secondary-color);
+      border: 2px solid var(--secondary-color);
+       /* Mosteneste font-weight: 700 de la regula generala 'button' */
+   }
+    button.secondary:hover {
+        background-color: var(--secondary-color);
+        color: var(--background-white);
+        border-color: var(--secondary-color);
+        opacity: 1; /* Suprascriem opacity general la hover pentru acest buton */
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem 1.5rem;
+      background-color: var(--success-bg);
+      border-left: 5px solid var(--primary-color);
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+
+    .result.error {
+      background-color: var(--error-bg);
+      color: var(--error-text);
+      border-left-color: var(--error-text);
+    }
+
+    .result strong {
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    .result.error strong {
+         color: var(--error-text);
+    }
+
+    .result .amount {
+        font-weight: 600;
+        color: #0056b3;
+    }
+     .result.error .amount {
+        color: var(--error-text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Calculator Popriri Salariu </h2>
+
+    <label for="salariu">Suma (RON):</label>
+    <input type="number" id="salariu" placeholder="Ex: 3500">
+
+    <div class="simple-calc-section">
+        <p>Calculează rapid o fracție din salariu:</p>
+        <div class="simple-calc-buttons">
+            <button class="simple-calc-button" onclick="calculeazaSimplu('1/2')">Calculează 1/2</button>
+            <button class="simple-calc-button" onclick="calculeazaSimplu('1/3')">Calculează 1/3</button>
+            <button class="simple-calc-button" onclick="calculeazaSimplu('2/3')">Calculează 2/3</button>
+        </div>
+    </div>
+
+
+    <fieldset>
+        <legend>Calcul Popriri Active </legend>
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="bifaSalariuMinim">
+          <label for="bifaSalariuMinim">Se aplică plafonul salariului minim?</label>
+        </div>
+
+        <div id="salariuMinimContainer" class="hidden">
+          <label for="salariuMinimInput">Valoare Salariu Minim Net pe Economie (RON):</label>
+          <input type="number" id="salariuMinimInput" value="2574"> </div>
+
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="anafPresent">
+          <label for="anafPresent">Există poprire de la ANAF?</label>
+        </div>
+        <div class="checkbox-container hidden" id="anafIntegralContainer">
+            <input type="checkbox" id="anafIntegral">
+            <label for="anafIntegral">Integrală?</label>
+        </div>
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="primariePresent">
+          <label for="primariePresent">Există poprire de la Primărie/Impozite Locale?</label>
+        </div>
+        <div class="checkbox-container hidden" id="primarieIntegralContainer">
+            <input type="checkbox" id="primarieIntegral">
+            <label for="primarieIntegral">Integrală?</label>
+        </div>
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="bejPresent">
+          <label for="bejPresent">Există popriri de la BEJ ?</label>
+        </div>
+        <div id="bejDetailsContainer" class="hidden">
+            <label for="numarBej">Număr dosare active:</label>
+            <input type="number" id="numarBej" value="1" min="1">
+        </div>
+    </fieldset>
+
+    <div class="button-group">
+        <button onclick="calculeaza()" class="primary">Calculează</button>
+        <button onclick="reseteaza()" class="secondary">Reset</button>
+    </div>
+
+    <div id="rezultat" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    // Referinte elemente DOM
+    const salariuInput = document.getElementById("salariu");
+    const bifaSalariuMinimCheckbox = document.getElementById("bifaSalariuMinim");
+    const salariuMinimContainer = document.getElementById("salariuMinimContainer");
+    const salariuMinimInput = document.getElementById("salariuMinimInput");
+    const anafPresentCheckbox = document.getElementById("anafPresent");
+    const anafIntegralContainer = document.getElementById("anafIntegralContainer");
+    const anafIntegralCheckbox = document.getElementById("anafIntegral");
+    const primariePresentCheckbox = document.getElementById("primariePresent");
+    const primarieIntegralContainer = document.getElementById("primarieIntegralContainer");
+    const primarieIntegralCheckbox = document.getElementById("primarieIntegral");
+    const bejPresentCheckbox = document.getElementById("bejPresent");
+    const bejDetailsContainer = document.getElementById("bejDetailsContainer");
+    const numarBejInput = document.getElementById("numarBej");
+    const rezultatDiv = document.getElementById("rezultat");
+
+    // Functie toggleConditionalFields
+    function toggleConditionalFields() {
+        salariuMinimContainer.classList.toggle('hidden', !bifaSalariuMinimCheckbox.checked);
+        salariuMinimInput.disabled = !bifaSalariuMinimCheckbox.checked;
+        anafIntegralContainer.classList.toggle('hidden', !anafPresentCheckbox.checked);
+        anafIntegralCheckbox.disabled = !anafPresentCheckbox.checked;
+        if (!anafPresentCheckbox.checked) anafIntegralCheckbox.checked = false;
+        primarieIntegralContainer.classList.toggle('hidden', !primariePresentCheckbox.checked);
+        primarieIntegralCheckbox.disabled = !primariePresentCheckbox.checked;
+         if (!primariePresentCheckbox.checked) primarieIntegralCheckbox.checked = false;
+        bejDetailsContainer.classList.toggle('hidden', !bejPresentCheckbox.checked);
+        numarBejInput.disabled = !bejPresentCheckbox.checked;
+         if (!bejPresentCheckbox.checked) numarBejInput.value = 1;
+    }
+
+    // Event listeners
+    bifaSalariuMinimCheckbox.addEventListener('change', toggleConditionalFields);
+    anafPresentCheckbox.addEventListener('change', toggleConditionalFields);
+    primariePresentCheckbox.addEventListener('change', toggleConditionalFields);
+    bejPresentCheckbox.addEventListener('change', toggleConditionalFields);
+    document.addEventListener('DOMContentLoaded', toggleConditionalFields);
+
+    // displayError si displaySuccess
+    function displayError(message) {
+        rezultatDiv.innerHTML = `<strong>Eroare:</strong> ${message}`;
+        rezultatDiv.style.display = "block";
+        rezultatDiv.classList.add("error");
+        rezultatDiv.classList.remove("success");
+    }
+    function displaySuccess(htmlContent) {
+        rezultatDiv.innerHTML = htmlContent;
+        rezultatDiv.style.display = "block";
+        rezultatDiv.classList.remove("error");
+        rezultatDiv.classList.add("success");
+    }
+
+    // Functie Calcul Simplu
+    function calculeazaSimplu(fractie) {
+        salariuInput.style.borderColor = '';
+        rezultatDiv.style.display = "none";
+
+        const salariu = parseFloat(salariuInput.value);
+
+        if (isNaN(salariu) || salariu <= 0) {
+            displayError("Te rog introdu o sumă validă pentru salariu pentru a calcula fracția.");
+            salariuInput.style.borderColor = 'red';
+            return;
+        }
+
+        let sumaCalculata = 0;
+        let labelFractie = fractie;
+
+        switch (fractie) {
+            case '1/2': sumaCalculata = salariu / 2; break;
+            case '1/3': sumaCalculata = salariu / 3; break;
+            case '2/3': sumaCalculata = (salariu / 3) * 2; break;
+            default: displayError("Tip de fracție necunoscut."); return;
+        }
+
+        const sumaRamasa = salariu - sumaCalculata;
+
+        displaySuccess(`
+            <p>Calcul pentru fracția <strong>${labelFractie}</strong> din salariul de <span class="amount">${salariu.toFixed(2)} RON</span>:</p>
+            <strong>Suma calculată (${labelFractie}):</strong> <span class="amount">${sumaCalculata.toFixed(2)} RON</span><br>
+            <strong>Suma rămasă:</strong> <span class="amount">${sumaRamasa.toFixed(2)} RON</span>
+        `);
+    }
+
+
+    // Functia calculeaza (complexa)
+    function calculeaza() {
+      salariuInput.style.borderColor = '';
+       if (salariuMinimInput.style) salariuMinimInput.style.borderColor = '';
+       if (numarBejInput.style) numarBejInput.style.borderColor = '';
+      rezultatDiv.classList.remove("error");
+      rezultatDiv.style.display = "none";
+
+      const salariu = parseFloat(salariuInput.value);
+      const aplicaSalMinim = bifaSalariuMinimCheckbox.checked;
+      const salariuMinim = aplicaSalMinim ? parseFloat(salariuMinimInput.value) : 0;
+      const anaf = anafPresentCheckbox.checked;
+      const primarie = primariePresentCheckbox.checked;
+      const bej = bejPresentCheckbox.checked;
+      const anafIntegral = anaf ? anafIntegralCheckbox.checked : false;
+      const primarieIntegral = primarie ? primarieIntegralCheckbox.checked : false;
+      const numarBej = bej ? parseInt(numarBejInput.value) : 0;
+
+      if (isNaN(salariu) || salariu <= 0) {
+        displayError("Te rog introdu o sumă validă pentru salariu (pentru calcul popriri).");
+        salariuInput.style.borderColor = 'red';
+        return;
+      }
+      if (aplicaSalMinim && (isNaN(salariuMinim) || salariuMinim <= 0)) {
+          displayError("Te rog introdu o valoare validă pentru salariul minim.");
+          salariuMinimInput.style.borderColor = 'red';
+          return;
+      }
+       if (bej && (isNaN(numarBej) || numarBej < 1)) {
+          displayError("Te rog introdu un număr valid de dosare BEJ (minim 1).");
+          numarBejInput.style.borderColor = 'red';
+          return;
+       }
+
+       // --- Logica de Calcul Popriri (SIMPLIFICATA) ---
+       let plafonRetinereMaximProcent = 0;
+       if (anaf && (primarie || bej)) { plafonRetinereMaximProcent = 0.5; }
+       else if (anaf) { plafonRetinereMaximProcent = 0.5; }
+       else if (primarie && bej) { plafonRetinereMaximProcent = 0.5; }
+       else if (primarie || bej) { plafonRetinereMaximProcent = 1/3; }
+
+       let bazaCalcul = salariu;
+       let sumaMaximaRetinuta = bazaCalcul * plafonRetinereMaximProcent;
+       let minimRamasGarantat = 0;
+
+       if (aplicaSalMinim && salariuMinim > 0) {
+           minimRamasGarantat = salariuMinim / 2;
+           sumaMaximaRetinuta = Math.max(0, Math.min(sumaMaximaRetinuta, salariu - minimRamasGarantat));
+       }
+
+       // ------ Distribuirea sumei retinute (SIMPLIFICATA) -------
+       let sumaRetinutaEfectiv = sumaMaximaRetinuta;
+       let sumaRamasaClientului = salariu - sumaRetinutaEfectiv;
+       let explicatie = "";
+       let detaliiDistributie = "";
+
+        if (!anaf && !primarie && !bej) {
+            explicatie = "Niciun tip de poprire activă selectată pentru calculul complex. Nu se reține nimic conform selecției curente."
+            sumaRetinutaEfectiv = 0;
+            sumaRamasaClientului = salariu;
+       } else if (sumaRetinutaEfectiv <= 0.01) {
+           explicatie = "Salariul este protejat de poprire conform plafoanelor aplicate sau este prea mic.";
+           sumaRetinutaEfectiv = 0;
+           sumaRamasaClientului = salariu;
+       } else {
+           explicatie = `Se poate reține maxim ${sumaRetinutaEfectiv.toFixed(2)} RON conform plafoanelor. `;
+           let deDistribuit = sumaRetinutaEfectiv;
+           let distribuitAnaf = 0, distribuitPrimarie = 0, distribuitBej = 0;
+           if (anaf && deDistribuit > 0) {
+               let potentialAnaf = Math.min(salariu / 2, deDistribuit);
+               distribuitAnaf = potentialAnaf;
+               deDistribuit -= distribuitAnaf;
+               detaliiDistributie += `<li>ANAF: <span class="amount">${distribuitAnaf.toFixed(2)} RON</span></li>`;
+           }
+           if (primarie && deDistribuit > 0) {
+                let potentialPrimarie = deDistribuit;
+                distribuitPrimarie = potentialPrimarie;
+                deDistribuit -= distribuitPrimarie;
+                 detaliiDistributie += `<li>Primărie: <span class="amount">${distribuitPrimarie.toFixed(2)} RON</span></li>`;
+           }
+           if (bej && deDistribuit > 0) {
+               distribuitBej = deDistribuit;
+               const perDosar = (numarBej > 0) ? (distribuitBej / numarBej).toFixed(2) : "N/A";
+               detaliiDistributie += `<li>BEJ: <span class="amount">${distribuitBej.toFixed(2)} RON</span> (${perDosar} RON/dosar)</li>`;
+               deDistribuit = 0;
+           }
+            sumaRetinutaEfectiv = distribuitAnaf + distribuitPrimarie + distribuitBej;
+            sumaRamasaClientului = salariu - sumaRetinutaEfectiv;
+            if (detaliiDistributie) {
+               explicatie += "<br><strong>Distribuția estimată a sumei reținute:</strong><ul>" + detaliiDistributie + "</ul>";
+           } else if (sumaRetinutaEfectiv > 0) {
+               explicatie += ` Suma de <span class="amount">${sumaRetinutaEfectiv.toFixed(2)} RON</span> nu a putut fi distribuită conform regulilor simplificate implementate.`
+           }
+       }
+
+       // Afisare finala - Calcul Popriri
+       displaySuccess(`
+         <p><strong>Rezultat Calcul Popriri:</strong></p>
+         <p>${explicatie || "Calcul efectuat."}</p>
+         <strong>Suma totală reținută (popriri):</strong> <span class="amount">${sumaRetinutaEfectiv.toFixed(2)} RON</span><br>
+         <strong>Suma rămasă în cont (după popriri):</strong> <span class="amount">${sumaRamasaClientului.toFixed(2)} RON</span>
+         ${aplicaSalMinim && minimRamasGarantat > 0 ? `<br><small>(Calcul realizat considerând garantarea a minim ${minimRamasGarantat.toFixed(2)} RON din salariul minim de ${salariuMinim.toFixed(2)} RON)</small>` : ''}
+       `);
+    }
+
+    // Functia reseteaza
+    function reseteaza() {
+      salariuInput.value = "";
+      salariuMinimInput.value = "2574"; // Valoare exemplu, verifica surse oficiale!
+      bifaSalariuMinimCheckbox.checked = false;
+      anafPresentCheckbox.checked = false;
+      primariePresentCheckbox.checked = false;
+      bejPresentCheckbox.checked = false;
+      anafIntegralCheckbox.checked = false;
+      primarieIntegralCheckbox.checked = false;
+      numarBejInput.value = 1;
+      toggleConditionalFields();
+      salariuInput.style.borderColor = '';
+      salariuMinimInput.style.borderColor = '';
+      numarBejInput.style.borderColor = '';
+      rezultatDiv.style.display = "none";
+      rezultatDiv.classList.remove("error", "success");
+    }
+
+  </script>
+</body>
+</html>
